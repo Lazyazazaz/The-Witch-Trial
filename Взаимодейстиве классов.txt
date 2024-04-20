@@ -1,0 +1,86 @@
+Взаимодействие Классов:
+
+CharacterControls сообщает Character о действиях пользователя, таких как команды на атаку.
+
+Character управляет основными действиями игрового персонажа, такими как перемещение и атака. Перемещение отображается через CharacterVisual, а атака происходит через CharacterWeaponController.
+
+CharacterWeaponController служит посредником, который активирует оружие игрока, в данном случае Sword.
+
+Sword отвечает за выполнение атаки и обработку столкновений с объектами, такими как EnemyCharacter.
+
+EnemyBehaviorController управляет поведением врагов в игре. Он использует HelperFunctions для генерации случайных действий и EnemyCharacter для реализации взаимодействий, таких как получение урона.
+Также он управляет анимациями через SkeletonAnimationController.
+
+
+Взаимодействие методов:
+
+
+CharacterControls
+Awake(): Инициализация GameInput.
+CharacterAttack_started(): Реагирует на атаку игрока и вызывает событие OnCharacterAttack.
+
+Character
+Awake(): Установка статического экземпляра Character.
+HelperFunctions_OnCharacterAttack: Отправляет команду атаки к ActiveWeapon.
+Update(): Получает вектор движения из CharacterControls.
+FixedUpdate(): Обрабатывает движение игрока.
+HandleMovement(): Реализует логику движения.
+
+CharacterWeaponController
+Awake(): Инициализация ActiveWeapon.
+Update(): Слежение за позицией курсора.
+FollowMousePosition(): Определяет ориентацию оружия.
+GetActiveWeapon(): Возвращает Sword.
+
+Sword
+Awake(): Инициализация компонентов Sword.
+Start(): Выключает коллайдер оружия.
+OnTriggerEnter2D(): Обрабатывает столкновения с врагами.
+AttackColliderTurnOn(): Включает коллайдер оружия.
+AttackColliderTurnOffOn(): Переключает состояние коллайдера.
+Attack(): Активирует коллайдер и событие атаки.
+
+SwordAnimationController и SwordSlashAnimations
+Awake(): Настройка аниматора.
+Start(): Подписка на событие OnSwordSwing из Sword.
+Sword_OnSwordSwing(): Запускает анимацию атаки.
+
+EnemyCharacter
+Awake(): Настройка PolygonCollider2D.
+Start(): Инициализация здоровья.
+OnTriggerEnter2D(): Детектирование атаки.
+TakeDamage(): Процесс нанесения урона.
+PolygonColliderTurnOff(): Выключение коллайдера.
+PolygonColliderTurnOn(): Включение коллайдера.
+DetectDeath(): Проверка условий смерти.
+
+EnemyBehaviorController
+Awake(): Настройка NavMeshAgent и начального состояния.
+Update(): Обработка текущего состояния AI.
+StateHandler(): Управление переключением состояний.
+ChasingTarget(): Преследование цели.
+CheckCurrentState(): Проверка и переключение состояний.
+AttackingTarget(): Атака цели.
+MovementDirectionHandler(): Обработка направления движения.
+Roaming(): Роуминг в случайную позицию.
+GetRoamingPosition(): Получение позиции для роуминга.
+ChangeFacingDirection(): Изменение направления взгляда.
+IsRunning(): Проверка, движется ли AI.
+GetRoamingAnimationSpeed(): Получение скорости анимации роуминга.
+
+EnemyAnimationController
+Awake(): Инициализация Animator.
+Start(): Подписка на события EnemyBehaviorController.
+OnDestroy(): Отписка от событий EnemyBehaviorController.
+Update(): Обновление аниматора с состояниями AI.
+TriggerAttackAnimationTurnOff(): Выключение анимации атаки.
+TriggerAttackAnimationTurnOn(): Включение анимации атаки.
+_enemyBehaviorController_OnEnemyAttack(): Обработчик события атаки AI.
+
+CharacterVisual
+Awake(): Инициализация компонентов визуальной части игрока.
+Update(): Обновление анимаций и ориентации спрайта игрока.
+AdjustCharacterFacingDirection(): Настройка направления лица игрока.
+
+HelperFunctions
+GetRandomDir(): Генерирует и возвращает случайный вектор направления для использования классом EnemyBehaviorController при выборе случайного направления движения в состоянии блуждания.
